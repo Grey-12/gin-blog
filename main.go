@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Grey-12/gin-blog/src/gin-blog/pkg/setting"
+	"github.com/Grey-12/gin-blog/pkg/setting"
 
 )
 
