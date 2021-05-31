@@ -3,8 +3,10 @@ package models
 import (
 	"fmt"
 	"github.com/Grey-12/gin-blog/pkg/setting"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"log"
+	"os"
 )
 
 var db *gorm.DB
@@ -20,7 +22,7 @@ func init() {
 		err                                               error
 		dbType, dbName, user, password, host, tablePrefix string
 	)
-	sec, err := setting.Cfg.GetSection("mysql")
+	sec, err := setting.Cfg.GetSection("database")
 	if err != nil {
 		log.Fatalln(2, "Fail to get section 'mysql': %v", err)
 	}
@@ -40,8 +42,20 @@ func init() {
 	db.SingularTable(true)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
+	InitModels()
 }
 
 func CloseDB() {
 	defer db.Close()
+}
+
+func InitModels() {
+	err := db.AutoMigrate(
+		&Tag{},
+		&Model{},
+	)
+	if err != nil {
+		log.Fatalf("Register table failed. err=%v", err)
+		os.Exit(0)
+	}
 }
