@@ -14,17 +14,19 @@ type Tag struct {
 	State      int    `json:"state"`
 }
 
+// BeforeCreate 创建Tag时自动填充创建时间
 func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
 	scope.SetColumn("CreateOn", time.Now().Unix())
 	return nil
 }
 
+// BeforeUpdate 更新Tag时自动填充更新时间
 func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
 	scope.SetColumn("ModifiedOn", time.Now().Unix())
 	return nil
 }
 
-// ExistTagByName checks if there is a tag with the same name
+// ExistTagByName 更加name字段检查数据库是否存在
 func ExistTagByName(name string) (bool, error) {
 	var tag Tag
 	err := db.Select("id").Where("name = ? AND deleted_on = ? ", name, 0).First(&tag).Error
@@ -39,7 +41,7 @@ func ExistTagByName(name string) (bool, error) {
 	return false, nil
 }
 
-// AddTag Add a Tag
+// AddTag 添加一个Tag
 func AddTag(name string, state int, createdBy string) error {
 	tag := Tag{
 		Name:      name,
@@ -53,7 +55,7 @@ func AddTag(name string, state int, createdBy string) error {
 	return nil
 }
 
-// GetTags gets a list of tags based on paging and constraints
+// GetTags 获取Tag列表
 func GetTags(pageNum int, pageSize int, maps interface{}) ([]Tag, error) {
 	var (
 		tags []Tag
@@ -73,7 +75,7 @@ func GetTags(pageNum int, pageSize int, maps interface{}) ([]Tag, error) {
 	return tags, nil
 }
 
-// GetTagTotal counts the total number of tags based on the constraint
+// GetTagTotal 获取所有Tag的数量
 func GetTagTotal(maps interface{}) (int, error) {
 	var count int
 	if err := db.Model(&Tag{}).Where(maps).Count(&count).Error; err != nil {
@@ -83,7 +85,7 @@ func GetTagTotal(maps interface{}) (int, error) {
 	return count, nil
 }
 
-// ExistTagByID determines whether a Tag exists based on the ID
+// ExistTagByID 根据ID查询数据是否存在
 func ExistTagByID(id int) (bool, error) {
 	var tag Tag
 	err := db.Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&tag).Error
@@ -97,7 +99,7 @@ func ExistTagByID(id int) (bool, error) {
 	return false, nil
 }
 
-// DeleteTag delete a tag
+// DeleteTag 删除Tag
 func DeleteTag(id int) error {
 	if err := db.Where("id = ?", id).Delete(&Tag{}).Error; err != nil {
 		return err
@@ -106,7 +108,7 @@ func DeleteTag(id int) error {
 	return nil
 }
 
-// EditTag modify a single tag
+// EditTag 更新Tag
 func EditTag(id int, data interface{}) error {
 	if err := db.Model(&Tag{}).Where("id = ? AND deleted_on = ? ", id, 0).Updates(data).Error; err != nil {
 		return err
