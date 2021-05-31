@@ -6,7 +6,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"log"
-	"os"
 )
 
 var db *gorm.DB
@@ -15,6 +14,7 @@ type Model struct {
 	ID int `gorm:"primary_key" json:"id"`
 	CreateOn int `json:"create_on"`
 	ModifiedOn int `json:"modified_on"`
+	DeletedOn  int `json:"deleted_on"`
 }
 
 func init() {
@@ -32,7 +32,7 @@ func init() {
 	password = sec.Key("PASSWORD").String()
 	host = sec.Key("HOST").String()
 	tablePrefix = sec.Key("TABLE_PREFIX").String()
-	db, err = gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s? charset=utf8&parseTime=True&loc=Local", user,  password, host, dbName))
+	db, err = gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", user,  password, host, dbName))
 	if err != nil {
 		log.Println(err)
 	}
@@ -42,6 +42,7 @@ func init() {
 	db.SingularTable(true)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
+
 	InitModels()
 }
 
@@ -50,12 +51,17 @@ func CloseDB() {
 }
 
 func InitModels() {
-	err := db.AutoMigrate(
-		&Tag{},
-		&Model{},
-	)
-	if err != nil {
-		log.Fatalf("Register table failed. err=%v", err)
-		os.Exit(0)
+	//err := db.AutoMigrate(
+	//	&Tag{},
+	//)
+	if !db.HasTable(&Tag{}) {
+		db.CreateTable(&Tag{})
 	}
+	//if !db.HasTable(&Model{}) {
+	//	db.CreateTable(&Model{})
+	//}
+	//if err != nil {
+	//	log.Fatalf("Register table failed. err=%v", err)
+	//	os.Exit(0)
+	//}
 }
