@@ -3,8 +3,9 @@ package models
 import (
 	"fmt"
 	"github.com/Grey-12/gin-blog/pkg/setting"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"log"
 )
 
@@ -20,48 +21,36 @@ type Model struct {
 func init() {
 	var (
 		err                                               error
-		dbType, dbName, user, password, host, tablePrefix string
+		dbName, user, password, host, tablePrefix string
+		port 											  int
 	)
 	sec, err := setting.Cfg.GetSection("database")
 	if err != nil {
 		log.Fatalln(2, "Fail to get section 'mysql': %v", err)
 	}
-	dbType = sec.Key("TYPE").String()
+	// dbType = sec.Key("TYPE").String()
 	dbName = sec.Key("NAME").String()
 	user = sec.Key("USER").String()
 	password = sec.Key("PASSWORD").String()
 	host = sec.Key("HOST").String()
+	port, _ = sec.Key("PORT").Int()
 	tablePrefix = sec.Key("TABLE_PREFIX").String()
-	db, err = gorm.Open(dbType, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local", user,  password, host, dbName))
+	dsn := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", host, port, user, dbName, password)
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			TablePrefix: tablePrefix,
+			SingularTable: true,
+		},
+	})
 	if err != nil {
 		log.Println(err)
 	}
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return tablePrefix + defaultTableName
-	}
-	db.SingularTable(true)
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
+	sqlDB, err := db.DB()
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
 
-	InitModels()
-}
-
-func CloseDB() {
-	defer db.Close()
+	// InitModels()
 }
 
 func InitModels() {
-	//err := db.AutoMigrate(
-	//	&Tag{},
-	//)
-	if !db.HasTable(&Tag{}) {
-		db.CreateTable(&Tag{})
-	}
-	//if !db.HasTable(&Model{}) {
-	//	db.CreateTable(&Model{})
-	//}
-	//if err != nil {
-	//	log.Fatalf("Register table failed. err=%v", err)
-	//	os.Exit(0)
-	//}
 }
