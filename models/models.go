@@ -1,41 +1,43 @@
 package models
 
 import (
-	"fmt"
+	_ "fmt"
 	"github.com/Grey-12/gin-blog/pkg/setting"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	"log"
+	"time"
 )
 
 var db *gorm.DB
 
 type Model struct {
-	ID int `gorm:"primary_key" json:"id"`
-	CreateOn int `json:"create_on"`
-	ModifiedOn int `json:"modified_on"`
-	DeletedOn  int `json:"deleted_on"`
+	ID uint `gorm:"primaryKey;autoIncrement;not null" json:"id"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+	DeletedAt time.Time `json:"deleted_at"`
 }
 
 func init() {
 	var (
 		err                                               error
-		dbName, user, password, host, tablePrefix string
-		port 											  int
+		dbName, user, password, tablePrefix string
+		//port 											  int
 	)
-	sec, err := setting.Cfg.GetSection("database")
+	sec, err := setting.Cfg.GetSection("postgresql")
 	if err != nil {
 		log.Fatalln(2, "Fail to get section 'mysql': %v", err)
 	}
 	// dbType = sec.Key("TYPE").String()
-	dbName = sec.Key("NAME").String()
+	dbName = sec.Key("DBNAME").String()
 	user = sec.Key("USER").String()
 	password = sec.Key("PASSWORD").String()
-	host = sec.Key("HOST").String()
-	port, _ = sec.Key("PORT").Int()
+	//host = sec.Key("HOST").String()
+	//port, _ = sec.Key("PORT").Int()
 	tablePrefix = sec.Key("TABLE_PREFIX").String()
-	dsn := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", host, port, user, dbName, password)
+	// dsn := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", host, port, user, dbName, password)
+	dsn := "host=localhost user=" + user + " password=" + password + " dbname=" + dbName + " port=5432  sslmode=disable TimeZone=Asia/Shanghai"
 	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix: tablePrefix,
@@ -45,12 +47,17 @@ func init() {
 	if err != nil {
 		log.Println(err)
 	}
-	sqlDB, err := db.DB()
-	sqlDB.SetMaxIdleConns(10)
-	sqlDB.SetMaxOpenConns(100)
+	//sqlDB, err := db.DB()
+	//sqlDB.SetMaxIdleConns(10)
+	//sqlDB.SetMaxOpenConns(100)
 
-	// InitModels()
+	InitModels()
 }
 
 func InitModels() {
+	err := db.AutoMigrate(&Tag{}, &Article{})
+	if err != nil {
+		log.Printf("数据库迁移出错 err: %v", err)
+	}
+
 }

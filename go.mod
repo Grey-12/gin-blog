@@ -14,7 +14,6 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jackc/pgproto3/v2 v2.0.7 // indirect
-	github.com/jinzhu/gorm v1.9.16 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.13 // indirect
@@ -27,6 +26,7 @@ require (
 	github.com/unknwon/com v1.0.1 // indirect
 	go.uber.org/atomic v1.8.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
+	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a // indirect
 	golang.org/x/net v0.0.0-20210610132358-84b48f89b13b // indirect
 	golang.org/x/sys v0.0.0-20210608053332-aa57babbf139 // indirect

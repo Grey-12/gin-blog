@@ -1,30 +1,29 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
-	"time"
+	"gorm.io/gorm"
 )
 
 type Tag struct {
 	Model
-
 	Name       string `json:"name"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
+	CreatedBy  string `json:"created_by" gorm:"size:100"`
+	ModifiedBy string `json:"modified_by" gorm:"size:100"`
 	State      int    `json:"state"`
 }
 
 // BeforeCreate 创建Tag时自动填充创建时间
-func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
-	scope.SetColumn("CreateOn", time.Now().Unix())
-	return nil
-}
+//func (tag *Tag) BeforeCreate(scope *gorm.) error {
+//
+//	scope.SetColumn("CreateOn", time.Now().Unix())
+//	return nil
+//}
 
 // BeforeUpdate 更新Tag时自动填充更新时间
-func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
-	scope.SetColumn("ModifiedOn", time.Now().Unix())
-	return nil
-}
+//func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
+//	scope.SetColumn("ModifiedOn", time.Now().Unix())
+//	return nil
+//}
 
 // ExistTagByName 更加name字段检查数据库是否存在
 func ExistTagByName(name string) (bool, error) {
@@ -76,8 +75,8 @@ func GetTags(pageNum int, pageSize int, maps interface{}) ([]Tag, error) {
 }
 
 // GetTagTotal 获取所有Tag的数量
-func GetTagTotal(maps interface{}) (int, error) {
-	var count int
+func GetTagTotal(maps interface{}) (int64, error) {
+	var count int64
 	if err := db.Model(&Tag{}).Where(maps).Count(&count).Error; err != nil {
 		return 0, err
 	}
