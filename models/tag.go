@@ -88,7 +88,8 @@ func GetTagTotal(maps interface{}) (int64, error) {
 // ExistTagByID 根据ID查询数据是否存在
 func ExistTagByID(id int) (bool, error) {
 	var tag Tag
-	err := db.Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&tag).Error
+	// err := db.Select("id").Where("id = ? AND deleted_on = ? ", id, 0).First(&tag).Error
+	err := db.Select("id").Where("id = ?", id).First(&tag).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	}

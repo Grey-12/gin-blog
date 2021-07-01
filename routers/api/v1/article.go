@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/Grey-12/gin-blog/models"
 	"github.com/Grey-12/gin-blog/pkg/errorCode"
 	"github.com/Grey-12/gin-blog/pkg/setting"
@@ -180,12 +181,13 @@ func EditArticle(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
+			fmt.Println(err.Message)
 			log.Println(err.Key, err.Message)
 		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"code": "code",
+		"code": code,
 		"msg": errorCode.GetMsg(code),
 		"data": make(map[string]string),
 	})
