@@ -55,7 +55,7 @@ func init() {
 }
 
 func InitModels() {
-	err := db.AutoMigrate(&Tag{}, &Article{})
+	err := db.AutoMigrate(&Tag{}, &Article{}, Auth{})
 	if err != nil {
 		log.Printf("数据库迁移出错 err: %v", err)
 	}
