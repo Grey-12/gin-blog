@@ -9,7 +9,7 @@ import (
 
 func main() {
 	router := routers.InitRouter()
-
+	router.StaticFile("/favicon.ico", "./static/favicon.ico")
 	s := &http.Server{
 		Addr: fmt.Sprintf(":%d", setting.HTTPPort),
 		Handler: router,

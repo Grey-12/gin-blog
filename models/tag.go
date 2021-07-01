@@ -46,6 +46,7 @@ func AddTag(name string, state int, createdBy string) error {
 		Name:      name,
 		State:     state,
 		CreatedBy: createdBy,
+		// CreatedAt: time.Now(),
 	}
 	if err := db.Create(&tag).Error; err != nil {
 		return err

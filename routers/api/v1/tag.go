@@ -3,6 +3,8 @@ package v1
 import (
 	"github.com/Grey-12/gin-blog/models"
 	"github.com/Grey-12/gin-blog/pkg/errorCode"
+	"github.com/Grey-12/gin-blog/pkg/setting"
+	"github.com/Grey-12/gin-blog/pkg/util"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
@@ -30,8 +32,16 @@ func GetTags(c *gin.Context) {
 		maps["state"] = int(state)
 	}
 	code := errorCode.SUCCESS
-	//data["lists"] = models.GetTags(util.GetPage(c), setting.PageSize, maps)
-	//data["total"] = models.GetTagTotal(maps)
+	listTag, err := models.GetTags(util.GetPage(c), setting.PageSize, maps)
+	if err != nil {
+
+	}
+	data["lists"] = listTag
+	count, err := models.GetTagTotal(maps)
+	if err != nil {
+		count = 0
+	}
+	data["total"] = count
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
