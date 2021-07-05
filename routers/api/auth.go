@@ -3,10 +3,10 @@ package api
 import (
 	"github.com/Grey-12/gin-blog/models"
 	"github.com/Grey-12/gin-blog/pkg/errorCode"
+	"github.com/Grey-12/gin-blog/pkg/logging"
 	"github.com/Grey-12/gin-blog/pkg/util"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -41,10 +41,11 @@ func GetAuth(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
+			logging.SugarLogger.Errorf("Err key: %s, Err Msg: %s", err.Key, err.Message)
+			// log.Println(err.Key, err.Message)
 		}
 	}
-
+	logging.SugarLogger.Debug("认证成功")
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg": errorCode.GetMsg(code),
