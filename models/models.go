@@ -2,6 +2,7 @@ package models
 
 import (
 	_ "fmt"
+	"github.com/Grey-12/gin-blog/pkg/logging"
 	"github.com/Grey-12/gin-blog/pkg/setting"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -57,7 +58,7 @@ func init() {
 func InitModels() {
 	err := db.AutoMigrate(&Tag{}, &Article{}, Auth{})
 	if err != nil {
-		log.Printf("数据库迁移出错 err: %v", err)
+		logging.SugarLogger.Infof("数据库迁移出错 err: %v", err)
 	}
 
 }

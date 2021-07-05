@@ -1,7 +1,7 @@
 package setting
 
 import (
-    "log"
+    "github.com/Grey-12/gin-blog/pkg/logging"
     "time"
 
     "github.com/go-ini/ini"
@@ -21,7 +21,7 @@ func init() {
     var err error
     Cfg, err = ini.Load("conf/app.ini")
     if err != nil {
-        log.Fatalf("Fail to parse 'conf/app.ini': %v", err)
+        logging.SugarLogger.Fatalf("Fail to parse 'conf/app.ini': %v", err)
     }
     LoadBase()
     LoadServer()
@@ -35,7 +35,7 @@ func LoadBase() {
 func LoadServer() {
     sec, err := Cfg.GetSection("server")
     if err != nil {
-        log.Fatalf("Fail to get section 'server': %v", err)
+        logging.SugarLogger.Fatalf("Fail to get section 'server': %v", err)
     }
     RunMode = Cfg.Section("").Key("RUN_MODE").MustString("debug")
     HTTPPort = sec.Key("HTTP_PORT").MustInt(8000)
@@ -46,7 +46,7 @@ func LoadServer() {
 func LoadApp() {
     sec, err := Cfg.GetSection("app")
     if err != nil {
-        log.Fatalf("Fail to get section 'app': %v", err)
+        logging.SugarLogger.Fatalf("Fail to get section 'app': %v", err)
     }
     JwtSecret = sec.Key("JWT_SECRET").MustString("!@)*#)!@U#@*!@!)")
     PageSize = sec.Key("PAGE_SIZE").MustInt(10)

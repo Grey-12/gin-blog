@@ -3,12 +3,12 @@ package v1
 import (
 	"github.com/Grey-12/gin-blog/models"
 	"github.com/Grey-12/gin-blog/pkg/errorCode"
+	"github.com/Grey-12/gin-blog/pkg/logging"
 	"github.com/Grey-12/gin-blog/pkg/setting"
 	"github.com/Grey-12/gin-blog/pkg/util"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/unknwon/com"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -75,7 +75,7 @@ func AddTag(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
+			logging.SugarLogger.Errorf("Err key = %v, Err msg=%v", err.Key, err.Message)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -119,7 +119,7 @@ func EditTag(c *gin.Context) {
 			models.EditTag(id, data)
 		} else {
 			for _, err := range valid.Errors {
-				log.Println(err.Key, err.Message)
+				logging.SugarLogger.Errorf("Err key = %v, Err msg=%v", err.Key, err.Message)
 			}
 		}
 	}
@@ -148,7 +148,7 @@ func DeleteTag(c *gin.Context) {
 		}
 	} else {
 		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
+			logging.SugarLogger.Errorf("Err key = %v, Err msg=%v", err.Key, err.Message)
 		}
 	}
 

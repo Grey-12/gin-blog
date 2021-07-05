@@ -2,6 +2,7 @@ package models
 
 import (
 	"gorm.io/gorm"
+	"time"
 )
 
 type Tag struct {
@@ -13,17 +14,17 @@ type Tag struct {
 }
 
 // BeforeCreate 创建Tag时自动填充创建时间
-//func (tag *Tag) BeforeCreate(scope *gorm.) error {
-//
-//	scope.SetColumn("CreateOn", time.Now().Unix())
+//func (tag *Tag) BeforeCreate(db *gorm.DB) error {
+//	db.Model(tag).Set()
+//	db.Scopes()
 //	return nil
 //}
 
 // BeforeUpdate 更新Tag时自动填充更新时间
-//func (tag *Tag) BeforeUpdate(scope *gorm.Scope) error {
-//	scope.SetColumn("ModifiedOn", time.Now().Unix())
-//	return nil
-//}
+func (tag *Tag) BeforeUpdate(db *gorm.DB) error {
+	db.Model(tag).UpdateColumn("UpdatedAt", time.Now())
+	return nil
+}
 
 // ExistTagByName 更加name字段检查数据库是否存在
 func ExistTagByName(name string) (bool, error) {

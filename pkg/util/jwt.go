@@ -33,6 +33,7 @@ func GenerateToken(username, password string) (string, error) {
 	return token, err
 }
 
+// ParseToken 解析JWT Token
 func ParseToken(token string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
